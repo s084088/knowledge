@@ -6,11 +6,14 @@ namespace LiteEntity.Tables
 {
     public class KPR : DbBase
     {
-        public virtual KP Origin { get; set; }
+        private KP origin;
+        private KP target;
+
+        public virtual KP Origin { get => origin; set { origin = value; PCEH(); } }
         public string OriginID { get; set; }
 
 
-        public virtual KP Target { get; set; }
+        public virtual KP Target { get => target; set { target = value; PCEH(); } }
         public string TargetID { get; set; }
     }
 }

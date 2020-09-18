@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Util;
 using Util.Helper;
@@ -16,115 +18,196 @@ namespace WpfApp1
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly LiteDB liteDB;
-        private KPModel selected;
-        private ObservableCollection<KPModel> kPModels;
+        private readonly LiteDB liteDB = new LiteDB();
+        private ObservableCollection<Entity> entities;
+        private Entity entity;
+        private EKP eKP;
+        private KP kP;
+        private Visibility isShow = Visibility.Hidden;
+        private Action clearLine;
 
-        public ObservableCollection<KPModel> KPModels { get => kPModels; set { kPModels = value; PCEH(); } }
+        public ObservableCollection<Entity> Entities { get => entities; set { entities = value; PCEH(); } }
 
+        public Entity Entity { get => entity; set { entity = value; PCEH(); } }
 
-        public ICommand ChangeCommand => new CommandBase(o => Selected = o as KPModel);
+        public EKP EKP { get => eKP; set { eKP = value; PCEH(); } }
 
-        public ICommand AddCommand => new CommandBase(async o =>
+        public KP KP
         {
-            string str = await DialogInput.Show("增加知识点");
-            if (str == null) return;
-            if (KPModels.Select(l => l.Name).Contains(str))
+            get => kP; set
             {
-                await DialogOK.Show("该知识点已存在");
+                KP kP1 = kP;
+                kP = value;
+                PCEH();
+                IsShow = kP == null ? Visibility.Hidden : Visibility.Visible;
+                if (kP1 != kP) clearLine?.Invoke();
+            }
+        }
+
+        public Visibility IsShow { get => isShow; set { isShow = value; PCEH(); } }
+
+
+        public ICommand AddEntityCommand => new CommandBase(async o =>
+        {
+            if (Entities == null) return;
+            string str = await DialogInput.Show("添加实体");
+            if (str == null) return;
+            if (Entities.Select(l => l.Name).Contains(str))
+            {
+                await DialogOK.Show("实体已存在");
                 return;
             }
-            KPModel kPModel = new KPModel { Name = str, ID = GuidHelper.GenerateKey() };
-            KPModels.Add(kPModel);
-            liteDB.Add(EntityCopyHelper.Mapper<KP, KPModel>(kPModel));
+            Entity = new Entity { Name = str };
+            Entities.Add(Entity);
+            liteDB.Add(Entity);
             await liteDB.SaveChangesAsync();
         });
 
-        public ICommand EditCommand => new CommandBase(async o =>
+        public ICommand EditEntityCommand => new CommandBase(async o =>
         {
-            string str = await DialogInput.Show("修改知识点", Selected.Name);
+            if (Entity == null) return;
+            string str = await DialogInput.Show("修改实体", Entity.Name);
             if (str == null) return;
-            if (str == Selected.Name) return;
-            if (KPModels.Select(l => l.Name).Contains(str))
+            if (str == Entity.Name) return;
+            if (Entities.Select(l => l.Name).Contains(str))
             {
-                await DialogOK.Show("该知识点已存在");
+                await DialogOK.Show("实体已存在");
                 return;
             }
-            Selected.Name = str;
-            KP kP = new KP { ID = Selected.ID, Name = str };
-            liteDB.Entry(kP).Property(l => l.Name).IsModified = true;
+            Entity.Name = str;
             await liteDB.SaveChangesAsync();
         });
 
-        public ICommand DeleteCommand => new CommandBase(async o =>
+        public ICommand DeleteEntityCommand => new CommandBase(async o =>
         {
-            bool bo = await DialogYesNo.Show("删除知识点");
-            if (!bo) return;
-            Selected = null;
-            KP kP = await liteDB.Set<KP>().Include(l => l.Extends).Include(l => l.Preconditions).FirstOrDefaultAsync(l => l.ID == Selected.ID);
-            kP.Extends.ForEach(l => liteDB.Remove(l));
-            kP.Preconditions.ForEach(l => liteDB.Remove(l));
-            liteDB.Remove(kP);
+            if (Entity == null) return;
+            if (Entity.EKPs.Count > 0)
+            {
+                await DialogOK.Show("该类下有知识点,无法深处");
+                return;
+            }
+            if (!await DialogYesNo.Show($"确定删除 {Entity.Name} 吗?")) return;
+            liteDB.Remove(Entity);
+            Entities.Remove(Entity);
             await liteDB.SaveChangesAsync();
         });
 
-        public ICommand AddExtend => new CommandBase(async o =>
+        public ICommand AddKPCommand => new CommandBase(async o =>
         {
-            KPModel kPModel = o as KPModel;
-            if (kPModel == null || Selected == null) return;
-            if (kPModel.Name == Selected.Name) return;
-            if (Selected.Extends.Contains(kPModel))
+            if (Entity == null) return;
+            if (Entity.EKPs == null) Entity.EKPs = new ObservableCollection<EKP>();
+            string str = await DialogInput.Show($"{Entity.Name} 添加知识点");
+            if (str == null) return;
+            if (entities.SelectMany(l => l.EKPs?.Select(k => k.KP.Name)).Contains(str))
             {
-                Selected.Extends.Remove(kPModel);
+                await DialogOK.Show("知识点已存在");
+                return;
             }
-            else
+            EKP = new EKP { KP = new KP { Name = str } };
+            Entity.EKPs.Add(EKP);
+            await liteDB.SaveChangesAsync();
+        });
+
+        public ICommand EditKPCommand => new CommandBase(async o =>
+        {
+            if (EKP == null) return;
+            string str = await DialogInput.Show("修改知识点", EKP.KP.Name);
+            if (str == null) return;
+            if (str == EKP.KP.Name) return;
+            if (entities.SelectMany(l => l.EKPs?.Select(k => k.KP.Name)).Contains(str))
             {
-                Selected.Extends.Add(kPModel);
-                Selected.Preconditions.Remove(kPModel);
+                await DialogOK.Show("知识点已存在");
+                return;
             }
+            EKP.KP.Name = str;
+            await liteDB.SaveChangesAsync();
+        });
+
+        public ICommand DeleteKPCommand => new CommandBase(async o =>
+        {
+            if (EKP == null) return;
+            if (!await DialogYesNo.Show($"确定要在 {Entity.Name} 下删除 {EKP.KP.Name} 吗?")) return;
+            liteDB.Remove(EKP);
+            if (EKP.KP.EKPs.Count == 1)
+            {
+                liteDB.Remove(EKP.KP);
+                if (EKP.KP == KP) KP = null;
+                liteDB.RemoveRange(EKP.KP.Extends);
+                liteDB.RemoveRange(EKP.KP.Preconditions);
+            }
+            EKP = null;
+            await liteDB.SaveChangesAsync();
         });
 
         public ICommand AddPrecondition => new CommandBase(async o =>
         {
-            KPModel kPModel = o as KPModel;
-            if (kPModel == null || Selected == null) return;
-            if (kPModel.Name == Selected.Name) return;
-            if (Selected.Preconditions.Contains(kPModel))
+            KP nkp = o as KP;
+            if (KP == null) return;
+            if (KP.Name == nkp.Name) return;
+
+            KPR kPR = KP.Preconditions.FirstOrDefault(l => l.Origin == nkp);
+            if (kPR == null)
             {
-                Selected.Preconditions.Remove(kPModel);
+                kPR = KP.Extends.FirstOrDefault(l => l.Target == nkp);
+                if (kPR != null) liteDB.Remove(kPR);
+                kPR = new KPR { Origin = nkp, Target = KP };
+                liteDB.Add(kPR);
             }
             else
             {
-                Selected.Preconditions.Add(kPModel);
-                Selected.Extends.Remove(kPModel);
+                liteDB.Remove(kPR);
             }
+            await liteDB.SaveChangesAsync();
+            ReSelect();
         });
 
-        public KPModel Selected
+        public ICommand AddExtend => new CommandBase(async o =>
         {
-            get => selected; set
+            KP nkp = o as KP;
+            if (KP == null) return;
+            if (KP.Name == nkp.Name) return;
+
+            KPR kPR = KP.Extends.FirstOrDefault(l => l.Target == nkp);
+            if (kPR == null)
             {
-                selected = value;
-                PCEH();
-                if (value != null) GetItem();
+                kPR = KP.Preconditions.FirstOrDefault(l => l.Origin == nkp);
+                if (kPR != null) liteDB.Remove(kPR);
+                kPR = new KPR { Target = nkp, Origin = KP };
+                liteDB.Add(kPR);
             }
+            else
+            {
+                liteDB.Remove(kPR);
+            }
+            await liteDB.SaveChangesAsync();
+            ReSelect();
+        });
+
+        private void ReSelect()
+        {
+            KP kP = KP;
+            KP = null;
+            KP = kP;
         }
+
+        public ICommand SelectKP => new CommandBase(o => KP = o as KP);
+
 
         public MainWindowViewModel()
         {
-            liteDB = new LiteDB();
-
-            KPModels = new ObservableCollection<KPModel>(liteDB.Set<KP>().Select(l => new KPModel { ID = l.ID, Name = l.Name }).ToList());
+            Init();
         }
 
-        public void GetItem()
+        public MainWindowViewModel(Action clearLine) : this()
         {
-            List<string> extends = liteDB.Set<KPR>().Where(l => l.TargetID == Selected.ID).Select(l => l.OriginID).ToList();
-            List<string> preconditions = liteDB.Set<KPR>().Where(l => l.OriginID == Selected.ID).Select(l => l.TargetID).ToList();
+            this.clearLine = clearLine;
+        }
 
-            Selected.Extends = new ObservableCollection<KPModel>(kPModels.Where(l => extends.Contains(l.ID)));
-            Selected.Preconditions = new ObservableCollection<KPModel>(kPModels.Where(l => preconditions.Contains(l.ID)));
-
+        public async void Init()
+        {
+            Entities = new ObservableCollection<Entity>();
+            List<Entity> entities = await liteDB.Set<Entity>().ToListAsync();
+            entities.ForEach(l => Entities.Add(l));
         }
     }
 }

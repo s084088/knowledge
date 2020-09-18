@@ -32,7 +32,7 @@ namespace WpfBase.MessageBox
 
             bool? ret = (await DialogHost.Show(sampleMessageDialog, target)) as bool?;
 
-            return ret == true ? true : false;
+            return ret == true;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using Util;
 
 namespace LiteEntity.Tables
@@ -8,7 +9,7 @@ namespace LiteEntity.Tables
     /// <summary>
     /// 所有表的公共字段
     /// </summary>
-    public class DbBase
+    public class DbBase : INotifyPropertyChanged
     {
         /// <summary>
         /// 主键ID
@@ -36,5 +37,18 @@ namespace LiteEntity.Tables
         /// </summary>
         [DefaultValue(0)]
         public int DeleteFlag { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// 通知界面更新指定属性名
+        /// </summary>
+        /// <param name="propertyName"></param>
+        public void PC(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        /// <summary>
+        /// 通知界面更新指定属性名(属性名由调用方法获取)
+        /// </summary>
+        /// <param name="propertyName"></param>
+        public void PCEH([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -20,7 +20,8 @@ namespace LiteEntity
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlite("Data Source=Local.db");
+            optionsBuilder.UseLazyLoadingProxies()
+                .UseMySql("Server=127.0.0.1;Port=3306;Database=zhishi; User=root;Password=123456;CharSet=utf8;Convert Zero Datetime=True;Allow Zero Datetime=True");
         }
 
         /// <summary>
@@ -33,36 +34,9 @@ namespace LiteEntity
 
             modelBuilder.Entity<KP>(entity =>
             {
-                entity.HasMany(l => l.Extends).WithOne(l => l.Origin).HasForeignKey(l => l.OriginID);
                 entity.HasMany(l => l.Preconditions).WithOne(l => l.Target).HasForeignKey(l => l.TargetID);
+                entity.HasMany(l => l.Extends).WithOne(l => l.Origin).HasForeignKey(l => l.OriginID);
             });
-            Seed(modelBuilder);
-        }
-
-        /// <summary>
-        /// 映射对应表
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="modelBuilder"></param>
-        private void SetTable<T>(ModelBuilder modelBuilder) where T : DbBase, new()
-        {
-            modelBuilder.Entity<T>();
-        }
-
-        /// <summary>
-        /// 初始化的数据
-        /// </summary>
-        /// <param name="modelBuilder"></param>
-        private void Seed(ModelBuilder modelBuilder)
-        {
-        }
-
-        /// <summary>
-        /// 生产环境初始化
-        /// </summary>
-        public void DbInit()
-        {
-            Database.EnsureCreated();
         }
     }
 }
