@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{937F4BAE-1F95-4CDE-AF36-8C32C4927AF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{937F4BAE-1F95-4CDE-AF36-8C32C4927AF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Util", "Util\Util.csproj", "{D57F45F9-585A-46DF-A113-FFE0A17B0029}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02.Client", "02.Client", "{B0B89CD9-5D29-47BD-851E-609974C21CEF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteEntity", "LiteEntity\LiteEntity.csproj", "{A008BC58-F008-406D-88AE-A26A72039704}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnowledgeGraph", "KnowledgeGraph\KnowledgeGraph.csproj", "{2B62D212-633B-47D4-B6F4-ECB383CB7583}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{A008BC58-F008-406D-88AE-A26A72039704}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A008BC58-F008-406D-88AE-A26A72039704}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A008BC58-F008-406D-88AE-A26A72039704}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B62D212-633B-47D4-B6F4-ECB383CB7583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B62D212-633B-47D4-B6F4-ECB383CB7583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B62D212-633B-47D4-B6F4-ECB383CB7583}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B62D212-633B-47D4-B6F4-ECB383CB7583}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{D57F45F9-585A-46DF-A113-FFE0A17B0029} = {8B097ABF-E729-497C-8A9A-5D29E1F5214B}
 		{D8802F66-63E7-41EE-BB01-521C065D6452} = {8B097ABF-E729-497C-8A9A-5D29E1F5214B}
 		{A008BC58-F008-406D-88AE-A26A72039704} = {B0B89CD9-5D29-47BD-851E-609974C21CEF}
+		{2B62D212-633B-47D4-B6F4-ECB383CB7583} = {B0B89CD9-5D29-47BD-851E-609974C21CEF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {13355AEB-DFBD-4DE7-AE60-EDD41DD676F5}

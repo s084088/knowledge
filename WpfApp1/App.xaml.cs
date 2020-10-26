@@ -22,13 +22,6 @@ namespace WpfApp1
         private void App_Startup(object sender, StartupEventArgs e)
         {
             new LiteEntity.LiteDB().Database.EnsureCreated();
-            //CreateHostBuilder(new string[0]).Build().Run();
         }
-
-        //public static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
-        //.ConfigureWebHostDefaults(webBuilder =>
-        //{
-        //    webBuilder.UseUrls("http://0.0.0.0:8000", "https://0.0.0.0:8001").UseStartup<Startup>();
-        //});
     }
 }
