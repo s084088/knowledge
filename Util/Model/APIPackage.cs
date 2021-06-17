@@ -85,4 +85,17 @@ namespace Util
         public DateTime Time { get; set; }
     }
 
+    public class ApiPakcage
+    {
+        public string Code { get; set; }
+
+        public object Result { get; set; }
+
+        public string Message { get; set; }
+
+        public DateTime Time { get; set; } = DateTime.Now;
+
+        public bool Success { get; set; } = true;
+    }
+
 }

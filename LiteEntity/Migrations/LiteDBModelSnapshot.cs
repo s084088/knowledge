@@ -14,7 +14,7 @@ namespace LiteEntity.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
+                .HasAnnotation("ProductVersion", "3.1.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("LiteEntity.Tables.EKP", b =>
@@ -96,13 +96,28 @@ namespace LiteEntity.Migrations
                     b.Property<DateTime?>("DeleteTime")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("Difficulty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Importance")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAbstract")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Name")
                         .HasColumnType("varchar(63) CHARACTER SET utf8mb4")
                         .HasMaxLength(63);
 
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
                     b.Property<string>("Text")
                         .HasColumnType("varchar(1024) CHARACTER SET utf8mb4")
                         .HasMaxLength(1024);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime(6)");
@@ -130,8 +145,20 @@ namespace LiteEntity.Migrations
                     b.Property<string>("OriginID")
                         .HasColumnType("varchar(63) CHARACTER SET utf8mb4");
 
+                    b.Property<int>("Subject")
+                        .HasColumnType("int");
+
                     b.Property<string>("TargetID")
                         .HasColumnType("varchar(63) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int>("Tightness")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateTime")
                         .HasColumnType("datetime(6)");

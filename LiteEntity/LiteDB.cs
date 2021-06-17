@@ -21,7 +21,7 @@ namespace LiteEntity
         {
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.UseLazyLoadingProxies()
-                .UseMySql("Server=127.0.0.1;Port=3306;Database=zhishi; User=root;Password=123456;CharSet=utf8;Convert Zero Datetime=True;Allow Zero Datetime=True");
+                .UseMySql("Server=47.103.142.91;Port=3306;Database=zhishi1; User=root;Password=UuTPdVdwgWrGMSQsSbS45oakyDawgT3X;CharSet=utf8;Convert Zero Datetime=True;Allow Zero Datetime=True");
         }
 
         /// <summary>

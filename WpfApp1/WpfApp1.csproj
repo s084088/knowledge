@@ -1,9 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" >
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +24,18 @@
     <ProjectReference Include="..\LiteEntity\LiteEntity.csproj" />
     <ProjectReference Include="..\Util\Util.csproj" />
     <ProjectReference Include="..\WpfBase\WpfBase.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Html\echarts.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Html\Html1.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Html\les-miserables.gexf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
